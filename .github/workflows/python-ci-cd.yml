@@ -1,0 +1,64 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run tests
+      run: python -m unittest discover
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
+
+  Deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Deploy to VDS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          docker stop accents || true
+          docker rm accents || true
+          
+          project_directory="/projects/Accents"
+          mount_configs="-v telegram_bot/config.ini:${project_directory}/configs/bot_config.ini
+          -v telegram_bot/accents.xml:$project_directory/configs/accents.xml"
+          
+          mount_logs="-v logs/accents.log:${project_directory}/logs/accents.log"
+          
+          mount_databases="-v database.db:${project_directory}/databases/database.db"
+          
+          mount_options = "${mount_configs} ${mount_logs} ${mount_databases}"
+          
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
+          docker run -d -p 80:80 --name accents $mount_options -d ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest

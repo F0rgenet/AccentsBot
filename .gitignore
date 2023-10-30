@@ -1,0 +1,4 @@
+/venv/
+/telegram_bot/config.ini
+/database.db
+/data/images/leaderboard.png
