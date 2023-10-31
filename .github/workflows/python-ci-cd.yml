@@ -81,7 +81,6 @@ jobs:
     - name: Create .env
       run: |
         echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
-      working-directory: $PROJECT_DIRECTORY
 
     - name: Run Docker container
       run: |
