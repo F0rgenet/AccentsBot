@@ -27,11 +27,9 @@ async def startup():
 	dispatcher = Dispatcher(storage=fsm_storage)
 	dispatcher.startup.register(on_startup)
 
-	bot = None
-	while not bot:
-		try:
-			bot = Bot(token=config.get_data()["token"], parse_mode="HTML")
-			await dispatcher.start_polling(bot)
-		except (TokenValidationError, TelegramUnauthorizedError):
-			logger.warning("Токен некорректен")
-			config.wrong_field("token")
+	try:
+		bot = Bot(token=config.get_data()["token"], parse_mode="HTML")
+		await dispatcher.start_polling(bot)
+	except (TokenValidationError, TelegramUnauthorizedError):
+		logger.warning("Токен некорректен")
+		config.wrong_field("token")

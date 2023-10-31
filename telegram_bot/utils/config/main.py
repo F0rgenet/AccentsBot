@@ -74,9 +74,7 @@ class BotConfig(object):
 		missing_fields = set(self.model_fields).difference(set(config_fields))
 		for field in self.model_fields:
 			if field not in missing_fields: continue
-			data = self.ask_field_value(field)
-			self.config.set(self.section, field, data)
-			logger.info(f"В конфиг записано отсутствующее значение: '{field} = {data}'")
+			logger.error(f"Отсутствует значение поля {field}")
 			change_file = True
 
 		if change_file:
