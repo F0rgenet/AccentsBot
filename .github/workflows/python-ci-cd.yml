@@ -70,7 +70,7 @@ jobs:
           
           mount_databases="-v database.db:${project_directory}/databases/database.db"
           
-          mount_options = "${mount_configs} ${mount_logs} ${mount_databases}"
+          mount_options="${mount_configs} ${mount_logs} ${mount_databases}"
           
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
           docker run -d -p 80:80 --name accents $mount_options -d ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
