@@ -28,7 +28,12 @@ async def startup():
 	dispatcher.startup.register(on_startup)
 
 	try:
-		bot = Bot(token=config.get_data()["token"], parse_mode="HTML")
+		config_data = config.get_data()
+		if config_data and "token" in config_data:
+			bot = Bot(token=config_data["token"], parse_mode="HTML")
+		else:
+			raise ValueError("Конфиг некорректен")
+
 		await dispatcher.start_polling(bot)
 	except (TokenValidationError, TelegramUnauthorizedError):
 		logger.warning("Токен некорректен")
