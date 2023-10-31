@@ -3,7 +3,7 @@ import random
 import aiofiles
 from aiogram import Router
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.filters.text import Text
+from aiogram import F
 from aiogram.fsm.context import FSMContext
 from aiogram.handlers.callback_query import CallbackQuery
 from aiogram.types import FSInputFile
@@ -15,7 +15,8 @@ from .commands import menu as menu_command
 
 router = Router()
 
-@router.callback_query(Text(text="menu"))
+
+@router.callback_query(F.data == "menu")
 async def menu(callback: CallbackQuery, state: FSMContext):
 	# TODO: change to another function
 	if await state.get_state() == "Menu:report":
@@ -36,7 +37,8 @@ async def menu(callback: CallbackQuery, state: FSMContext):
 	await state.update_data(menu_message=menu_message)
 	await callback.answer()
 
-@router.callback_query(Text(text="menu"))
+
+@router.callback_query(F.data == "menu")
 async def return_to_menu(callback: CallbackQuery, state: FSMContext):
 	if await state.get_state() in Quiz:
 		quiz_messages = []
@@ -55,7 +57,7 @@ async def return_to_menu(callback: CallbackQuery, state: FSMContext):
 	await callback.answer()
 
 
-@router.callback_query(Text(text="accents"))
+@router.callback_query(F.data == "accents")
 async def accents(callback: CallbackQuery):
 	keyboard = await keyboards.get_back_keyboard("menu")
 	text = ""
@@ -65,7 +67,8 @@ async def accents(callback: CallbackQuery):
 	await callback.message.edit_text(text, reply_markup=keyboard.as_markup())
 	await callback.answer()
 
-@router.callback_query(Text(text="report"))
+
+@router.callback_query(F.data == "report")
 async def report(callback: CallbackQuery, state: FSMContext):
 	await state.set_state(Menu.report)
 	await state.update_data(report_messages_responses=[])
@@ -77,7 +80,7 @@ async def report(callback: CallbackQuery, state: FSMContext):
 	await callback.answer()
 
 
-@router.callback_query(Text(text="leaderboard"))
+@router.callback_query(F.data == "leaderboard")
 async def leaderboard(callback: CallbackQuery, state: FSMContext):
 	await state.set_state(Menu.leaderboard)
 	await callback.message.edit_text(text="Загрузка...")
@@ -87,7 +90,8 @@ async def leaderboard(callback: CallbackQuery, state: FSMContext):
 	await callback.message.answer_photo(image, reply_markup=keyboard.as_markup())
 	await callback.answer()
 
-@router.callback_query(Text(text="return_from_leaderboard"))
+
+@router.callback_query(F.data == "return_from_leaderboard")
 async def return_from_leaderboard(callback: CallbackQuery, state: FSMContext):
 	await callback.message.delete()
 	message = await callback.message.answer(text="Загрузка...")

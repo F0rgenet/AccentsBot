@@ -48,25 +48,41 @@ jobs:
     runs-on: ubuntu-latest
     needs: Build
 
+    env:
+      PROJECT_DIRECTORY: "/projects/Accents"
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Deploy to VDS
-      uses: appleboy/ssh-action@master
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.5
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          docker stop accents || true
-          docker rm accents || true
 
-          project_directory="/projects/Accents"
-          mount_configs="--mount type=bind,source=/telegram_bot/config.ini,target=${project_directory}/configs/bot_config.ini"
-          mount_logs="--mount type=bind,source=/logs/accents.log,target=${project_directory}/logs/accents.log"
-          mount_databases="--mount type=bind,source=/database.db,target=${project_directory}/databases/database.db"
-          mount_options="${mount_configs} ${mount_logs} ${mount_databases}"
+    - name: Stop and remove container
+      run: |
+        docker stop accents || true
+        docker rm accents || true
+    
+    - name: Pull docker image
+      run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
 
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
-          docker run -d -p 80:80 --name accents $mount_options ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
+    - name: Define Mounts
+      id: define-mounts
+      run: |
+        mount_configs="--mount type=bind,source=/telegram_bot/config.ini,target=${{ env.PROJECT_DIRECTORY }}/configs/bot_config.ini"
+        mount_logs="--mount type=bind,source=/logs/accents.log,target=${{ env.PROJECT_DIRECTORY }}/logs/accents.log"
+        mount_databases="--mount type=bind,source=/database.db,target=${{ env.PROJECT_DIRECTORY }}/databases/database.db"
+        echo "::set-output name=mount-options::${mount_configs} ${mount_logs} ${mount_databases}"
+
+    - name: Create .env
+      run: |
+        echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > $PROJECT_DIRECTORY/.env
+      working-directory: $PROJECT_DIRECTORY
+
+    - name: Run Docker container
+      run: |
+        docker run -d -p 80:80 --name accents ${{ steps.define-mounts.outputs.mount_options }} ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest

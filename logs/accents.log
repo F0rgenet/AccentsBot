@@ -1,2 +1,0 @@
-2023-10-30 07:37:51.125 | INFO     | telegram_bot.utils.config.main:validate_config:117 - Файл конфигурации бота проверен
-2023-10-30 07:37:51.150 | INFO     | telegram_bot.main:on_startup:20 - Бот запущен

@@ -8,6 +8,7 @@ from telegram_bot.utils.states import Menu
 from loguru import logger
 router = Router()
 
+
 @router.message(Menu.report)
 async def catch_report(message: Message, state: FSMContext):
 	text = f"Получен репорт от пользователя {message.from_user.username}:\n{message.text}"

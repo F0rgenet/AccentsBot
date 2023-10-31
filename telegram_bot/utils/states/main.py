@@ -2,11 +2,13 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from typing import Callable
 
+
 class Menu(StatesGroup):
 	main = State()
 	accents = State()
 	leaderboard = State()
 	report = State()
+
 
 class Quiz(StatesGroup):
 	preparing = State()

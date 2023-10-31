@@ -6,13 +6,17 @@ from loguru import logger
 
 from utils.leaderboard.tables import get_table
 
+
 async def generate_image_with_text(file_name: str, text: str, font_size: int, indent: int = 25, xy: tuple = (0, 0)):
 	font = ImageFont.truetype("data/fonts/consolas.ttf", font_size)
-	size = font.getsize_multiline(text)
-	image_size = (size[0]+indent + xy[0], size[1]+indent + xy[1])
+	left, top, right, bottom = font.getbbox(text)
+	width, height = right - left, bottom - top
+	image_size = (width + indent + xy[0], height + indent + xy[1])
 	image = Image.new('RGB', image_size, color=(24, 37, 51))
 	draw = ImageDraw.Draw(image)
-	draw.text((image_size[0]//2, image_size[1]//2), text, (167, 180, 194), font=font, anchor="mm")
+	text_x = (image_size[0] // 2) - (width // 2) - left
+	text_y = (image_size[1] // 2) - (height // 2) - top
+	draw.text((text_x, text_y), text, (167, 180, 194), font=font, anchor="mm")
 	image.save(f"data/images/{file_name}")
 
 

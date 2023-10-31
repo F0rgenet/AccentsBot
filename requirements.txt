@@ -1,6 +1,7 @@
-loguru~=0.6.0
-SQLAlchemy~=2.0.0
-aiogram~=3.0.0b6
-aiofiles~=22.1.0
-Pillow~=9.4.0
-prettytable~=3.6.0
+loguru~=0.7.2
+SQLAlchemy~=2.0.22
+aiogram >= 3.0
+aiofiles~=23.1.0
+Pillow~=10.1.0
+prettytable~=3.9.0
+python-decouple
