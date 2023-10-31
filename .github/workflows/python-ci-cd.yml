@@ -78,6 +78,14 @@ jobs:
         mount_databases="--mount type=bind,source=/database.db,target=${{ env.PROJECT_DIRECTORY }}/databases/database.db"
         echo "::set-output name=mount-options::${mount_configs} ${mount_logs} ${mount_databases}"
 
+    - name: Check Runner Type
+      run: |
+        echo "This workflow is running on a GitHub-hosted runner."
+        echo "Runner OS: ${{ runner.os }}"
+        echo "Runner label: ${{ runner.label }}"
+        echo "Runner name: ${{ runner.name }}"
+        echo "Runner version: ${{ runner.version }}"
+
     - name: Create .env
       run: |
         echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
