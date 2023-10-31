@@ -5,6 +5,7 @@ from dataclasses import asdict
 from loguru import logger
 import time
 
+
 class BotConfig(object):
 	def __init__(self, file_path: str):
 		self.config = ConfigParser()

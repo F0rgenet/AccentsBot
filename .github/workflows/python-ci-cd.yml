@@ -63,13 +63,9 @@ jobs:
           docker rm accents || true
 
           project_directory="/projects/Accents"
-          mount_configs="-v /telegram_bot/config.ini:${project_directory}/configs/bot_config.ini
-          -v /telegram_bot/accents.xml:${project_directory}/configs/accents.xml"
-
-          mount_logs="-v /logs/accents.log:${project_directory}/logs/accents.log"
-
-          mount_databases="-v /database.db:${project_directory}/databases/database.db"
-
+          mount_configs="--mount type=bind,source=/telegram_bot/config.ini,target=${project_directory}/configs/bot_config.ini"
+          mount_logs="--mount type=bind,source=/logs/accents.log,target=${project_directory}/logs/accents.log"
+          mount_databases="--mount type=bind,source=/database.db,target=${project_directory}/databases/database.db"
           mount_options="${mount_configs} ${mount_logs} ${mount_databases}"
 
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
