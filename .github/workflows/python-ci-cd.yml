@@ -68,4 +68,9 @@ jobs:
 
           mount_logs="-v /logs/accents.log:${project_directory}/logs/accents.log"
 
-          mount_databases="-v /database.db:${project_dim secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
+          mount_databases="-v /database.db:${project_directory}/databases/database.db"
+
+          mount_options="${mount_configs} ${mount_logs} ${mount_databases}"
+
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
+          docker run -d -p 80:80 --name accents $mount_options ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
