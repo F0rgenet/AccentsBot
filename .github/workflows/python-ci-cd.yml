@@ -46,6 +46,7 @@ jobs:
 
   Deploy:
     runs-on: ubuntu-latest
+    needs: Build
 
     steps:
     - name: Checkout repository
