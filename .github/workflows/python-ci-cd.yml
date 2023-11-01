@@ -55,33 +55,33 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-- name: Setup SSH
-  uses: appleboy/ssh-action@master
-  with:
-    host: ${{ secrets.SSH_HOST }}
-    username: ${{ secrets.SSH_USERNAME }}
-    key: ${{ secrets.SSH_PRIVATE_KEY }}
-    script: |
-      # Commands to stop and remove the container
-        docker stop accents || true
-        docker rm accents || true
+    - name: Setup SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          # Commands to stop and remove the container
+            docker stop accents || true
+            docker rm accents || true
 
-        # Pull the Docker image
-        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
+            # Pull the Docker image
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
 
-        # Define Mounts
-        mount_logs="--mount type=bind,source=/logs,target=${{ env.PROJECT_DIRECTORY }}/logs"
-        echo "::set-output name=mount-options::${mount_logs}"
+            # Define Mounts
+            mount_logs="--mount type=bind,source=/logs,target=${{ env.PROJECT_DIRECTORY }}/logs"
+            echo "::set-output name=mount-options::${mount_logs}"
 
-        # Check Runner Type
-        echo "This workflow is running on a GitHub-hosted runner."
-        echo "Runner OS: ${{ runner.os }}"
-        echo "Runner label: ${{ runner.label }}"
-        echo "Runner name: ${{ runner.name }}"
-        echo "Runner version: ${{ runner.version }}"
+            # Check Runner Type
+            echo "This workflow is running on a GitHub-hosted runner."
+            echo "Runner OS: ${{ runner.os }}"
+            echo "Runner label: ${{ runner.label }}"
+            echo "Runner name: ${{ runner.name }}"
+            echo "Runner version: ${{ runner.version }}"
 
-        # Create .env file
-        echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
+            # Create .env file
+            echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
 
-        # Run Docker container
-        docker run -d -p 80:80 --name accents ${{ steps.define-mounts.outputs.mount-options }} ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
+            # Run Docker container
+            docker run -d -p 80:80 --name accents ${{ steps.define-mounts.outputs.mount-options }} ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
