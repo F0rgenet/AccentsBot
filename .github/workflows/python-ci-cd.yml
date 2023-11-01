@@ -74,4 +74,4 @@ jobs:
             mount_options="${mount_logs}"
 
             # Run Docker container
-            docker run -d -p 80:80 --name accents -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} $mount-options ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
+            docker run -d -p 80:80 --name accents $mount-options -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
