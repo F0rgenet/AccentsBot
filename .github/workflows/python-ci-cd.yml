@@ -71,7 +71,7 @@ jobs:
 
             # Define Mounts
             mount_logs="--mount type=bind,source=/logs,target=${{ env.PROJECT_DIRECTORY }}/logs"
-            echo "::set-output name=mount-options::${mount_logs}"
+            mount_options="${mount_logs}"
 
             # Run Docker container
-            docker run -d -p 80:80 --name accents -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} ${{ steps.define-mounts.outputs.mount-options }} ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
+            docker run -d -p 80:80 --name accents -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} $mount-options ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
