@@ -70,7 +70,7 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/accents-telegram-bot:latest
 
             # Define Mounts
-            mount_logs="--mount type=bind,source="$(pwd)"/${{ env.PROJECT_DIRECTORY }}/logs,target=/logs"
+            mount_logs="--mount type=bind,source="$(pwd)"${{ env.PROJECT_DIRECTORY }}/logs,target=/logs"
             mount_options="${mount_logs}"
 
             # Run Docker container
