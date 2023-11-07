@@ -12,6 +12,8 @@ from utils.leaderboard.images import generate_leaderboard_image
 
 
 async def on_startup(dispatcher: Dispatcher):
+	with open("logs/test.txt", "w") as file:
+		file.write("test")
 	register_models()
 	await generate_leaderboard_image()
 	AccentsQuizManager().xml_manager.parse()
